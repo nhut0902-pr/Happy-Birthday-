@@ -11,27 +11,14 @@ const App: React.FC = () => {
   const [stage, setStage] = useState<CelebrationStage>(CelebrationStage.QUESTION);
   const [answer, setAnswer] = useState('');
   const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Map stages to progress percentage for "Video look"
-  const stageProgress: Record<CelebrationStage, number> = {
-    [CelebrationStage.QUESTION]: 10,
-    [CelebrationStage.COUNTDOWN]: 30,
-    [CelebrationStage.ENVELOPE]: 50,
-    [CelebrationStage.CARD]: 75,
-    [CelebrationStage.PHOTOS]: 100
-  };
-
-  useEffect(() => {
-    setProgress(stageProgress[stage]);
-  }, [stage]);
 
   const handleStart = () => {
     if (answer.trim() === '') {
       alert("Nhập gì đó vào đã nè!");
       return;
     }
+    // Phát nhạc ngay khi tương tác đầu tiên
     if (audioRef.current) {
       audioRef.current.play().catch(err => console.log("Autoplay blocked", err));
     }
@@ -53,14 +40,14 @@ const App: React.FC = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-pink-600 mb-6 drop-shadow-sm font-romantic">
               Hôm nay là ngày gì nhỉ?
             </h1>
-            <div className="bg-white/90 p-8 rounded-3xl shadow-xl border-2 border-pink-200 w-full max-w-md">
+            <div className="bg-white/90 p-8 rounded-3xl shadow-xl border-2 border-pink-200 w-full max-w-md backdrop-blur-sm">
               <input
                 type="text"
                 placeholder="Ví dụ: Sinh nhật em..."
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleStart()}
-                className="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-400 focus:outline-none text-pink-600 mb-6 text-center text-lg"
+                className="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-400 focus:outline-none text-pink-600 mb-6 text-center text-lg shadow-inner"
               />
               <button
                 onClick={handleStart}
@@ -74,7 +61,7 @@ const App: React.FC = () => {
 
       case CelebrationStage.COUNTDOWN:
         return (
-          <div className="z-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
+          <div className="z-10 animate-in fade-in scale-95 duration-700">
             <Countdown onComplete={() => setStage(CelebrationStage.ENVELOPE)} />
           </div>
         );
@@ -116,24 +103,16 @@ const App: React.FC = () => {
         loop
       />
       
-      {/* Cinematic Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1.5 bg-pink-100 z-50">
-        <div 
-          className="h-full bg-pink-500 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(236,72,153,0.5)]"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
       <FallingHearts />
       
       <div className="relative z-10 w-full flex items-center justify-center">
         {renderStage()}
       </div>
       
-      {/* Music Toggle */}
+      {/* Nút điều khiển nhạc */}
       <button 
         onClick={toggleMute}
-        className="fixed bottom-20 md:bottom-6 right-6 z-50 p-3 bg-white/60 backdrop-blur-md hover:bg-white/90 rounded-full shadow-lg transition-all border border-pink-200 transform hover:scale-110 active:scale-90"
+        className="fixed bottom-6 right-6 z-50 p-3 bg-white/60 backdrop-blur-md hover:bg-white/90 rounded-full shadow-lg transition-all border border-pink-200 transform hover:scale-110 active:scale-90"
         title={isMuted ? "Bật nhạc" : "Tắt nhạc"}
       >
         {isMuted ? (
@@ -145,9 +124,9 @@ const App: React.FC = () => {
 
       {/* Footer Branding - Powered By Nhutcoder */}
       <div className="absolute bottom-6 left-0 right-0 text-center z-20 pointer-events-none">
-        <div className="text-pink-300 text-xs md:text-sm font-medium animate-pulse space-y-1">
-          <p className="opacity-70">Made with ❤️ for you</p>
-          <p className="text-pink-500 font-bold tracking-widest uppercase">Powered By Nhutcoder</p>
+        <div className="text-pink-300 text-xs md:text-sm font-medium animate-pulse">
+          <p>Made with ❤️ for you</p>
+          <p className="text-pink-500 font-bold tracking-widest uppercase mt-1">Powered By Nhutcoder</p>
         </div>
       </div>
     </div>
